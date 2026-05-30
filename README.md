@@ -1,6 +1,8 @@
 # Notification Queue API
 
-API REST com mensageria RabbitMQ para demonstrar publicacao, consumo assíncrono e processamento de eventos.
+[![CI](https://github.com/ViiniDev/notification-queue-api/actions/workflows/ci.yml/badge.svg)](https://github.com/ViiniDev/notification-queue-api/actions/workflows/ci.yml)
+
+API REST com mensageria RabbitMQ para demonstrar publicacao, consumo assincrono e processamento de eventos.
 
 ## Funcionalidades
 
@@ -11,6 +13,8 @@ API REST com mensageria RabbitMQ para demonstrar publicacao, consumo assíncrono
 - Listagem de notificacoes por status.
 - PostgreSQL e RabbitMQ via Docker Compose.
 - Painel RabbitMQ Management.
+- Testes de integracao com RabbitTemplate mockado.
+- CI com GitHub Actions para testes e build Docker.
 
 ## Tecnologias
 
@@ -24,6 +28,8 @@ API REST com mensageria RabbitMQ para demonstrar publicacao, consumo assíncrono
 - H2 Database
 - Docker e Docker Compose
 - Swagger/OpenAPI
+- JUnit, MockMvc e Mockito
+- GitHub Actions
 - Maven
 
 ## Como Executar Localmente
@@ -34,6 +40,12 @@ java -jar target/notification-queue-api-0.0.1-SNAPSHOT.jar
 ```
 
 No modo local, o listener do RabbitMQ fica desligado por padrao para a aplicacao subir sem RabbitMQ.
+
+Swagger:
+
+```text
+http://localhost:8080/docs
+```
 
 ## Como Executar com Docker
 
@@ -46,12 +58,6 @@ API:
 
 ```text
 http://localhost:8080
-```
-
-Swagger:
-
-```text
-http://localhost:8080/docs
 ```
 
 RabbitMQ Management:
@@ -78,10 +84,28 @@ GET /api/notifications?status=PROCESSED
 }
 ```
 
+## Testes E CI
+
+```bash
+mvn test
+```
+
+Os testes validam:
+
+- criacao de notificacao com status `QUEUED`;
+- publicacao da mensagem no RabbitMQ via `RabbitTemplate`;
+- listagem por status;
+- processamento para status `PROCESSED`;
+- validacao de requisicao invalida.
+
+O workflow em `.github/workflows/ci.yml` executa os testes Maven e o build Docker via Docker Compose.
+
 ## Aprendizados Demonstrados
 
 - Publicacao de eventos em fila.
-- Consumo assíncrono com `@RabbitListener`.
+- Consumo assincrono com `@RabbitListener`.
 - Separacao entre receber requisicao e processar trabalho.
 - Rastreamento de status de processamento.
 - API, banco e broker subindo com Docker Compose.
+- Testes de integracao sem depender de broker externo.
+- Pipeline de CI para validar testes e build Docker.
